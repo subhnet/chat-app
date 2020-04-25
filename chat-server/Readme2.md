@@ -5,9 +5,9 @@ description:
 tags: 
 ---
 
-In this tutorial we would be building a simple realtime chat application which demonstrates how we can use Kafka as a MessageBroker with Java,SpringBoot as Backend and ReactJS on the front-end.
+In this tutorial we would be building a simple realtime chat application which demonstrates how to use Kafka as a MessageBroker along with Java,SpringBoot as Backend and ReactJS on the front-end.
 
-This project is just for learning purpose. It doesn't contain production ready codebase.
+This project is just for learning purpose. It doesn't contain production ready code.
 
 ## What is Kafka
 Apache Kafka is a widely popular distributed messaging system which provides a fast, distributed, highly scalable, highly available, publish-subscribe messaging system.
@@ -56,10 +56,11 @@ kafka-topics --create --topic kafka-chat --zookeeper localhost:2181 --replicatio
 
 ```
 
-Here we are creating a topic `kafka-chat` to handle the messages. We would be using it later in the chat application.
+Here we are creating a topic `kafka-chat` to handle chat messages. We would be using this topic later in the chat application.
 
+Now, Let's write some code. 
 ## Backend Development with Java, SpringBoot and Kafka
-Now, Let's start with some coding. We would be developing the backend in Spring Boot. 
+We would be developing the backend in Spring Boot. 
 So, download a fresh Spring Boot Project using [Spring Initializer](https://start.spring.io/) with following details.
 
 * Project: Maven Project
@@ -149,11 +150,18 @@ You can use postman to do a POST request as shown below.
 
 But how do you know the command successfully sent a message to the topic? Right now, you don’t consume messages inside your app, which means you cannot be sure!
 
-Fortunately, there is an easy way to create a consumer to test right away. Inside the bin folder of your Kafka directory, run the following command:
+Fortunately, there is an easy way to create a consumr to test right away. Inside the bin folder of your Kafka directory, run the following command:
 ```
-./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic myTopic
+./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic kafka-chat
 ```
-### Develop Consumer to listen to 
+
+Hit `http://localhost:8080/api/send` again to see the message in the terminal running the Kafka consumer
+
+
+Now lets achieve the same functionality using the Java Code.For that we would need to build a Consumer or Listener in Java. 
+
+### Develop a Consumer to listen to Kafka Topic.
+Similar to `ProducerConfig.java` we need to have a Consumer Config to enable the consumer to find the broker.
 
 *ListenerConfig.java*
 ```java
