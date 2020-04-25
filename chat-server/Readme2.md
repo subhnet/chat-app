@@ -259,9 +259,10 @@ Next, Lets move on to developing the UI part.
       
 
 ## FrontEnd Development in ReactJS
-
-### Create React App
-We will use Create React App to install all the dependencies 
+We would be create a simple chat page with list of messages and a text field at the bottom of page to send the messages to kafka backend.
+ 
+#### Create React App
+We will use Create React App to quickstart the app.
 
 ```
 npm install --g create-react-app
@@ -270,21 +271,27 @@ cd chat-ui
 ```
 
 Install dependencies
+* axios
+* socketjs
+* react-stomp
+* material-ui
 
 ```
-npm install socketjs react-stomp material-ui
+npm install socketjs react-stomp material-ui axios
 ```
+You can refer documentation of material-ui [here](https://material-ui.com/getting-started/installation/).
+
 
 
 ```
 npm start
 ```
 
-*Copy the Styling*
+*Copy the CSS style*
 
-Copy and paste the css 
-
-### Creating 
+Copy the css style from [here](https://raw.githubusercontent.com/subhset/chat-app/master/chat-ui/src/App.css) paste it in the `App.css` file.
+ 
+Next add the below changes to `App.js`
 
 *App.js*
 ```javascript
@@ -359,8 +366,47 @@ const App = () => {
 
 export default App;
 ```
-Here we are using SocketJsCLient from `react-stomp` to connect to the WebSocket. 
+Here we are using **SocketJsCLient** from `react-stomp` to connect to the WebSocket. 
+
 Alternatively, you can also use SockJS from `sockjs-client` to create a `stompclient` and connect to the WebSocket.   
+
+Next, we need to create Messages Child Component which would show the list of messages.
+
+```javascript
+import React from 'react'
+
+const Messages = ({ messages, currentUser }) => {
+
+    let renderMessage = (message) => {
+        const { sender, content, color } = message;
+        const messageFromMe = currentUser.username === message.sender;
+        const className = messageFromMe ? "Messages-message currentUser" : "Messages-message";
+        return (
+            <li className={className}>
+                <span
+                    className="avatar"
+                    style={{ backgroundColor: color }}
+                />
+                <div className="Message-content">
+                    <div className="username">
+                        {sender}
+                    </div>
+                    <div className="text">{content}</div>
+                </div>
+            </li>
+        );
+    };
+
+    return (
+        <ul className="messages-list">
+            {messages.map(msg => renderMessage(msg))}
+        </ul>
+    )
+}
+
+
+export default Messages
+``` 
 
 *LoginForm.js*
 
@@ -406,7 +452,7 @@ export default LoginForm
 
 Open the application in multiple windows and send a message in one window.All the other browser window should show the sent messages.
 
-
+![chat-app](https://user-images.githubusercontent.com/5060594/80292849-7c085400-8777-11ea-8fe2-1a996bce1006.gif)
 
 we are using SockJS to listen to the messages, which are sent from the server-side WebSocket.
 
