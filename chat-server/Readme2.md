@@ -5,14 +5,14 @@ description:
 tags: 
 ---
 
-In this tutorial we would be building a simple realtime chat application which demonstrates how to use Kafka as a MessageBroker along with Java,SpringBoot as Backend and ReactJS on the front-end.
+In this tutorial, we would be building a simple real-time chat application that demonstrates how to use Kafka as a message broker along with Java, SpringBoot as Backend, and ReactJS on the front-end.
 
-This project is just for learning purpose. It doesn't contain production ready code.
+This project is just for learning purposes. It doesn't contain a production-ready code.
 
 ## What is Kafka
-Apache Kafka is a widely popular distributed messaging system which provides a fast, distributed, highly scalable, highly available, publish-subscribe messaging system.
+Apache Kafka is a widely popular distributed messaging system that provides a fast, distributed, highly scalable, highly available, publish-subscribe messaging system.
 
-In turn this solves part of a much harder problem:
+In turn, this solves part of a much harder problem:
 
 Communication and integration between components of large software systems.
 
@@ -34,7 +34,7 @@ If you are using Windows, you also have the same scripts inside the `windows` fo
 
 ##### *Start Zookeeper*
 
-**Zookeeper** is basically to manage the kafka cluster. It comes bundled with the downloaded kafka directory.So, we need not download it separately.
+**Zookeeper** is basically to manage the Kafka cluster. It comes bundled with the downloaded Kafka directory. So, we need not download it separately.
 
 To start the zookeeper, go to the *bin* directory and enter the below command.
 ```
@@ -46,7 +46,7 @@ Next, To start the Kafka broker, run the below command in the same directory
 ```
 ./kafka-server-start.sh ../config/server.properties
 ```
-Make sure zookeeper is running before starting kafka because Kafka receives information such as Offset information kept in the partitions from Zookeeper.
+Make sure the zookeeper is running before starting Kafka because Kafka receives information such as Offset information kept in the partitions from Zookeeper.
 
 ##### *Create a Kafka Topic*
 
@@ -59,9 +59,9 @@ kafka-topics --create --topic kafka-chat --zookeeper localhost:2181 --replicatio
 Here we are creating a topic `kafka-chat` to handle chat messages. We would be using this topic later in the chat application.
 
 Now, Let's write some code. 
-## Backend Development with Java, SpringBoot and Kafka
+## Backend Development with Java, SpringBoot, and Kafka
 We would be developing the backend in Spring Boot. 
-So, download a fresh Spring Boot Project using [Spring Initializer](https://start.spring.io/) with following details.
+So, download a fresh Spring Boot Project using [Spring Initializer](https://start.spring.io/) with the following details.
 
 * Project: Maven Project
 * Language: Java
@@ -72,12 +72,12 @@ So, download a fresh Spring Boot Project using [Spring Initializer](https://star
     * Spring for Websocket
 
 #### *Why WebSockets?*
-Since it is not possible for Apache Kafka to send the Consumer Messages instantly to client with Classical GET and POST operations. 
+Since Apache Kafka cannot send the Consumer Messages instantly to the client with Classical GET and POST operations. 
 I performed these operations using WebSockets which provide **full-duplex bidirectional** communication, which means that information can flow from the client to the server and also in the opposite direction simultaneously.
-It is widely used in the chat applications.
+It is widely used in chat applications.
 
 ### Developing Producer to push messages to Kafka Topic
-First we would have to write a Config class for the Producer.
+First, we would have to write a Config class for the Producer.
 
 *ProducerConfiguration.java*
 ```java
@@ -106,14 +106,14 @@ public class ProducerConfiguration {
 ```
 This class creates a `ProducerFactory` which knows how to create producers based on the configurations we provided.
 
-We also declared a `KafkaTemplate` bean to perform high-level operations on your producer. In other words, the template is able to do operations such as sending a message to a topic and efficiently hides under-the-hood details from you.
+We also declared a `KafkaTemplate` bean to perform high-level operations on your producer. In other words, the template can do operations such as sending a message to a topic and efficiently hides under-the-hood details from you.
 
 In `producerConfigurations` method, we need to perform the following tasks:
 
 * `BOOTSTRAP_SERVERS_CONFIG` to set the server address on which Kafka is running.
 * `KEY_SERIALIZER_CLASS_CONFIG` and `VALUE_SERIALIZER_CLASS_CONFIG` to deserialize the key and value from the Kafka Queue.
 
-The next step is to create a endpoint to send the messages to Kafka topic.
+The next step is to create an endpoint to send the messages to the Kafka topic.
 Create the following controller class for that.
 
 ##### *ChatController.java*
@@ -137,9 +137,9 @@ public class ChatController {
 
 }
 ```
-As you can see the endpoint is quite simple. When we do `POST` request to `/api/send` it Injects the KafkaTemplate configured earlier and sends a message to `kafka-chat` topic which we created earlier.
+As you can see the endpoint is quite simple. When we do `POST` request to `/api/send` it Injects the KafkaTemplate configured earlier and sends a message to the `kafka-chat` topic which we created earlier.
 
-Let's test everything we build until now. Run the `main` method inside `KafakaJavaApp.java` class. To run from command line, execute the following command
+Let's test everything we build until now. Run the `main` method inside `KafakaJavaApp.java` class. To run from the command line, execute the following command
 ```
 mvn spring-boot:run
 ``` 
@@ -150,7 +150,7 @@ You can use postman to do a POST request as shown below.
 
 But how do you know the command successfully sent a message to the topic? Right now, you don’t consume messages inside your app, which means you cannot be sure!
 
-Fortunately, there is an easy way to create a consumr to test right away. Inside the bin folder of your Kafka directory, run the following command:
+Fortunately, there is an easy way to create a consumer to test right away. Inside the bin folder of your Kafka directory, run the following command:
 ```
 ./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic kafka-chat
 ```
@@ -158,7 +158,7 @@ Fortunately, there is an easy way to create a consumr to test right away. Inside
 Hit `http://localhost:8080/api/send` again to see the message in the terminal running the Kafka consumer
 
 
-Now lets achieve the same functionality using the Java Code.For that we would need to build a Consumer or Listener in Java. 
+Now let's achieve the same functionality using the Java Code. For that, we would need to build a Consumer or Listener in Java. 
 
 ### Develop a Consumer to listen to Kafka Topic.
 Similar to `ProducerConfig.java` we need to have a Consumer Config to enable the consumer to find the broker.
@@ -283,10 +283,8 @@ Copy and paste the css
 
 
 
-we are using SockJS to listen to the messages, which are sent from the server side WebSocket.
+we are using SockJS to listen to the messages, which are sent from the server-side WebSocket.
 
 ## Git Repo Link.
 
 You can find the complete source code in my [Github](https://github.com/subhset/chat-app) page.
-
-
