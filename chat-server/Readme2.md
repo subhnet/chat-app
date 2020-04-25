@@ -222,8 +222,10 @@ public class MessageListener {
 In this class, the @KafkaListener annotated the method that will listen for the Kafka queue messages, 
 and template.convertAndSend will convert the message and send that to WebSocket topic.
 
-
-### Spring WebSocket Configuration
+Next, we need to configure the Websocket to send the Message to client system.
+ 
+#### Spring WebSocket Configuration
+*WebSocketConfig.java*
 ```java
 @Configuration
 @EnableWebSocketMessageBroker
@@ -242,17 +244,21 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 }
 ```
 
+Next add the below `MessageMapping` in the `ChatController.java`
+```
+    @MessageMapping("/sendMessage")
+    @SendTo("/topic/group")
+    public Message broadcastGroupMessage(@Payload Message message) {
+        //Sending this message to all the subscribers
+        return message;
+    }
+``` 
+This would broadcast the Message all the client who have subscribed to this topic.
 
-
-
-  
-  ---
-  ---
-    
+Next, Lets move on to developing the UI part.
       
-      
 
-## FrontEnd Development - ReactJS
+## FrontEnd Development in ReactJS
 
 ### Create React App
 We will use Create React App to install all the dependencies 
@@ -280,11 +286,130 @@ Copy and paste the css
 
 ### Creating 
 
+*App.js*
+```javascript
+import React, { useState } from 'react';
+import SockJsClient from 'react-stomp';
+import './App.css';
+import Input from './components/Input/Input';
+import LoginForm from './components/LoginForm';
+import Messages from './components/Messages/Messages';
+import chatAPI from './services/chatapi';
+import { randomColor } from './utils/common';
+
+
+const SOCKET_URL = 'http://localhost:8080/ws-chat/';
+
+const App = () => {
+  const [messages, setMessages] = useState([])
+  const [user, setUser] = useState(null)
+
+  let onConnected = () => {
+    console.log("Connected!!")
+  }
+
+  let onMessageReceived = (msg) => {
+    console.log('New Message Received!!', msg);
+    setMessages(messages.concat(msg));
+  }
+
+  let onSendMessage = (msgText) => {
+    chatAPI.sendMessage(user.username, msgText).then(res => {
+      console.log('Sent', res);
+    }).catch(err => {
+      console.log('Error Occured while sending message to api');
+    })
+  }
+
+  let handleLoginSubmit = (username) => {
+    console.log(username, " Logged in..");
+
+    setUser({
+      username: username,
+      color: randomColor()
+    })
+
+  }
+
+  return (
+    <div className="App">
+      {!!user ?
+        (
+          <>
+            <SockJsClient
+              url={SOCKET_URL}
+              topics={['/topic/group']}
+              onConnect={onConnected}
+              onDisconnect={console.log("Disconnected!")}
+              onMessage={msg => onMessageReceived(msg)}
+              debug={false}
+            />
+            <Messages
+              messages={messages}
+              currentUser={user}
+            />
+            <Input onSendMessage={onSendMessage} />
+          </>
+        ) :
+        <LoginForm onSubmit={handleLoginSubmit} />
+      }
+    </div>
+  )
+}
+
+export default App;
+```
+Here we are using SocketJsCLient from `react-stomp` to connect to the WebSocket. 
+Alternatively, you can also use SockJS from `sockjs-client` to create a `stompclient` and connect to the WebSocket.   
+
+*LoginForm.js*
+
+```javascript
+import React, { useState } from 'react';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+
+const LoginForm = ({ onSubmit }) => {
+
+    const [username, setUsername] = useState("");
+    let handleUserNameChange = event => setUsername(event.target.value);
+
+    let handleSubmit = () => {
+        onSubmit(username);
+    }
+
+    return (
+        <div>
+            <TextField
+                label="Type your username"
+                placeholder="Username"
+                onChange={handleUserNameChange}
+                margin="normal"
+                onKeyPress={event => {
+                    if (event.key === 'Enter') {
+                        handleSubmit();
+                    }
+                }}
+            />
+            <br />
+            <Button variant="contained" color="primary" onClick={handleSubmit} >
+                Login
+             </Button>
+
+        </div>
+    )
+}
+
+export default LoginForm
+```
+# Final Result
+
+Open the application in multiple windows and send a message in one window.All the other browser window should show the sent messages.
 
 
 
 we are using SockJS to listen to the messages, which are sent from the server-side WebSocket.
 
-## Git Repo Link.
+#### SourceCode
 
 You can find the complete source code in my [Github](https://github.com/subhset/chat-app) page.
