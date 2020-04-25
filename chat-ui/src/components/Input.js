@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 
 const Input = ({ onSendMessage }) => {
     const [text, setText] = useState("")
@@ -9,27 +10,31 @@ const Input = ({ onSendMessage }) => {
         setText(e.target.value)
     }
 
-    let onSubmit = (e) => {
-        e.preventDefault();
+    let onSubmit = () => {
         setText("")
         onSendMessage(text);
     }
 
     return (
-        <div className="Input">
-            <form onSubmit={e => onSubmit(e)}>
-                <input
-                    onChange={e => onChange(e)}
-                    value={text}
-                    type="text"
-                    placeholder="Enter your message and press ENTER"
-                    autofocus="true"
-                />
-                <button>Send</button>
-                {/* <Button variant="contained" color="primary">
-                    Send
-                </Button> */}
-            </form>
+        <div className="message-input">
+            <TextField
+                className="inputField"
+                label="Type your message here..."
+                placeholder="Enter your message and press ENTER"
+                onChange={e => onChange(e)}
+                margin="normal"
+                value={text}
+                onKeyPress={event => {
+                    if (event.key === 'Enter') {
+                        onSubmit(text);
+                    }
+                }}
+                style={{ height: "30px", width: "80%" }}
+            />
+
+            <Button variant="contained" color="primary" onClick={onSubmit}>
+                Send
+            </Button>
         </div>
     );
 }

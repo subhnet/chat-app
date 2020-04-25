@@ -64,24 +64,25 @@
   max-width: 400px;
   margin: 0;
   border-radius: 12px;
-  background-color: cornflowerblue;
-  color: white;
+  background-color: rgb(148, 216, 255);
+  color: rgb(90, 90, 90);
   display: inline-block;
 }
 
 .currentUser>.Message-content .text {
-  background-color: orangered;
+  background-color: rgb(143, 255, 152);
 }
 
-form {
+.message-input {
   display: flex;
   width: 100%;
   justify-content: space-between;
   max-width: 900px;
   margin: 0 auto 40px;
+  margin-bottom: 38px;
 }
 
-input {
+.inputField {
   padding: 5px;
   font-size: 16px;
   border-radius: 8px;
@@ -89,12 +90,3 @@ input {
   flex-grow: 1;
 }
 
-button {
-  padding: 5px 10px;
-  font-size: 16px;
-  background-color: orangered;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  margin-left: 10px;
-}

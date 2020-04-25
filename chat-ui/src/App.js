@@ -8,7 +8,6 @@ import { randomColor } from './utils/common';
 import './App.css';
 import chatAPI from './services/chatapi';
 
-var stompClient;
 const SOCKET_URL = 'http://localhost:8080/ws-chat/';
 
 const App = () => {
@@ -17,10 +16,6 @@ const App = () => {
 
   let onConnected = () => {
     console.log("Connected!!")
-    const Stomp = require('stompjs');
-    const SockJS = require('sockjs-client');
-    const socket = new SockJS(SOCKET_URL);
-    stompClient = Stomp.over(socket);
   }
 
   let onMessageReceived = (msg) => {
@@ -28,25 +23,12 @@ const App = () => {
     setMessages(messages.concat(msg));
   }
 
-  let onSendMessage = (message) => {
-    // chatAPI.sendMessage(message).then(res => {
-    //   console.log('Sent', res);
-    // }).catch(err => {
-    //   console.log('Error Occured while sendinf to api');
-    // })
-
-
-
-    if (stompClient) {
-      // send public message
-      console.log('Sending Group message...', message)
-
-      var chatMessage = {
-        sender: user.username,
-        content: message
-      };
-      stompClient.send("/app/sendMessage", {}, JSON.stringify(chatMessage));
-    }
+  let onSendMessage = (msgText) => {
+    chatAPI.sendMessage(user.username, msgText).then(res => {
+      console.log('Sent', res);
+    }).catch(err => {
+      console.log('Error Occured while sending message to api');
+    })
   }
 
   let handleLoginSubmit = (username) => {
@@ -67,7 +49,7 @@ const App = () => {
               topics={['/topic/group']}
               onConnect={onConnected}
               onDisconnect={console.log("Disconnected!")}
-              onMessage={(msg) => onMessageReceived(msg)}
+              onMessage={msg => onMessageReceived(msg)}
               debug={false}
             />
             <Messages
