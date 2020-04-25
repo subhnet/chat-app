@@ -1,7 +1,6 @@
 package com.shubh.kafkachat.controller;
 
 import com.shubh.kafkachat.constants.KafkaConstants;
-import com.shubh.kafkachat.consumer.MessageListener;
 import com.shubh.kafkachat.model.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -19,23 +18,19 @@ public class ChatController {
 
     @Autowired
     private KafkaTemplate<String, Message> kafkaTemplate;
-    @Autowired
-    MessageListener messageListener;
 
     @PostMapping(value = "/api/send", consumes = "application/json", produces = "application/json")
     public void sendMessage(@RequestBody Message message) {
         message.setTimestamp(LocalDateTime.now().toString());
-        System.out.println("Hitting post" + message.toString());
         try {
-            //Sending the message to kafka queue
+            //Sending the message to kafka topic queue
             kafkaTemplate.send(KafkaConstants.KAFKA_TOPIC, message).get();
-
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
     }
 
-    //    -------------- Web Socket api ----------------
+    //    -------------- WebSocket API ----------------
     @MessageMapping("/sendMessage")
     @SendTo("/topic/group")
     public Message broadcastGroupMessage(@Payload Message message) {

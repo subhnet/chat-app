@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import SockJsClient from 'react-stomp';
-import Input from './components/Input';
+import './App.css';
+import Input from './components/Input/Input';
 import LoginForm from './components/LoginForm';
 import Messages from './components/Messages/Messages';
+import chatAPI from './services/chatapi';
 import { randomColor } from './utils/common';
 
-import './App.css';
-import chatAPI from './services/chatapi';
 
 const SOCKET_URL = 'http://localhost:8080/ws-chat/';
 
@@ -32,11 +32,13 @@ const App = () => {
   }
 
   let handleLoginSubmit = (username) => {
-    console.log(username);
+    console.log(username, " Logged in..");
+
     setUser({
       username: username,
       color: randomColor()
     })
+
   }
 
   return (

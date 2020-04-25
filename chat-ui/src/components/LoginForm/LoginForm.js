@@ -18,6 +18,11 @@ const LoginForm = ({ onSubmit }) => {
                 placeholder="Username"
                 onChange={handleUserNameChange}
                 margin="normal"
+                onKeyPress={event => {
+                    if (event.key === 'Enter') {
+                        handleSubmit();
+                    }
+                }}
             />
             <br />
             <Button variant="contained" color="primary" onClick={handleSubmit} >
